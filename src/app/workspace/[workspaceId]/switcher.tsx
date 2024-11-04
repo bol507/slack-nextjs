@@ -39,7 +39,7 @@ export const WorkspaceIdSwitcher = () => {
       <DropdownMenuContent side="bottom" align="start" className="w-64">
         <DropdownMenuItem
           className="cursor-pointer flex-col justify-start items-start capitalize"
-          onClick={() => router.push(`/workspaces/${workspaceId}`)}
+          onClick={() => router.push(`/workspace/${workspaceId}`)}
         >
           {workspace?.name}
           <span className="text-xs text-muted-foreground">
@@ -50,7 +50,7 @@ export const WorkspaceIdSwitcher = () => {
           <DropdownMenuItem
             key={workspace._id}
             className="cursor-pointer capitalize"
-            onClick={() => router.push(`/workspaces/${workspace._id}`)}
+            onClick={() => router.push(`/workspace/${workspace._id}`)}
           >
             <div className="size-9 relative overflow-hidden bg-[#616061] text-white font-semibold text-lg rounded-md flex items-center justify-center mr-2">
               {workspace.name.charAt(0).toUpperCase()}
