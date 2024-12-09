@@ -1,6 +1,12 @@
 import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
-import { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  MutableRefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { PiTextAa } from "react-icons/pi";
 import { MdSend } from "react-icons/md";
 import { Button } from "./ui/button";
@@ -8,15 +14,15 @@ import { ImageIcon, Smile } from "lucide-react";
 import { Hint } from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
+import { current } from "../../convex/members";
 
 type EditorValue = {
   image: File | null;
   body: string;
-}
-
+};
 
 interface EditorProps {
-  onSubmit: ({image, body }: EditorValue) => void;
+  onSubmit: ({ image, body }: EditorValue) => void;
   onCancel: () => void;
   placeholder?: string;
   defaultValue?: Delta | Op[];
@@ -25,9 +31,17 @@ interface EditorProps {
   variant?: "create" | "update";
 }
 
-const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultValue = [], disabled = false,innerRef, variant = "create" }: EditorProps) => {
-  
+const Editor = ({
+  onSubmit,
+  onCancel,
+  placeholder = "Write a message",
+  defaultValue = [],
+  disabled = false,
+  innerRef,
+  variant = "create",
+}: EditorProps) => {
   const [text, setText] = useState("");
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -55,30 +69,42 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
       theme: "snow",
       placeholder: placeholderRef.current,
       modules: {
-        keyboard:{
-          bindings:{
-            enter:{
-                key: "Enter",
-                handler: () =>{
-                  // TODO Submit form
-                  return;
-                }
+        toolbar: [
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          ["bold", "italic", "underline", "strike"],
+          ["blockquote", "code-block"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ script: "sub" }, { script: "super" }],
+          [{ indent: "-1" }, { indent: "+1" }],
+          [{ color: [] }, { background: [] }],
+          [{ font: [] }],
+          [{ align: [] }],
+          ["clean"],
+        ],
+        keyboard: {
+          bindings: {
+            enter: {
+              key: "Enter",
+              handler: () => {
+                // TODO Submit form
+                return;
+              },
             },
-            shift_enter:{
+            shift_enter: {
               key: "Enter",
               shiftKey: true,
-              handler: () =>{
-                quill.insertText(quill.getSelection()?.index || 0 , '\n');
-              }
-            }
-          }
+              handler: () => {
+                quill.insertText(quill.getSelection()?.index || 0, "\n");
+              },
+            },
+          },
         },
-      }
+      },
     };
     const quill = new Quill(editorContainer, options);
     quillRef.current = quill;
     quillRef.current.focus();
-    if (innerRef){
+    if (innerRef) {
       innerRef.current = quill;
     }
     quill.setContents(defaultValueRef.current);
@@ -91,26 +117,36 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
       if (container) {
         container.innerHTML = "";
       }
-      if(quillRef.current){
+      if (quillRef.current) {
         quillRef.current = null;
       }
-      if(innerRef){
+      if (innerRef) {
         innerRef.current = null;
       }
     };
   }, []);
 
-  const isEmpty = text.replace(/<(.|n)*?>/g,"").trim().length === 0;
+  const toggleToolbar = () => {
+    setIsToolbarVisible((current) => !current);
+    const toolbarElement = containerRef.current?.querySelector(
+      ".ql-toolbar"
+    )
+    if (toolbarElement) {
+      toolbarElement.classList.toggle("hidden");
+    }
+  };
+
+  const isEmpty = text.replace(/<(.|n)*?>/g, "").trim().length === 0;
 
   return (
     <div className="flex flex-col">
       <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
         <div ref={containerRef} className="h-full ql-custom" />
         <div className="flex px-2 pb-2 z-[5]">
-          <Hint label="Hide formatting">
+          <Hint label={isToolbarVisible ? "Hide formatting" : "Show formatting"}>
             <Button
-              disabled={false}
-              onClick={() => {}}
+              disabled={disabled}
+              onClick={toggleToolbar}
               size="iconSm"
               variant="ghost"
             >
@@ -119,7 +155,7 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
           </Hint>
           <Hint label="Emoji">
             <Button
-              disabled={false}
+              disabled={disabled}
               onClick={() => {}}
               size="iconSm"
               variant="ghost"
@@ -129,7 +165,7 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
           </Hint>
           <Hint label="Image">
             <Button
-              disabled={false}
+              disabled={disabled}
               onClick={() => {}}
               size="iconSm"
               variant="ghost"
@@ -140,7 +176,7 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
           {variant === "update" && (
             <div className="ml-auto flex items-center gap-x-2">
               <Button
-                disabled={false}
+                disabled={disabled}
                 onClick={() => {}}
                 size="sm"
                 variant="ghost"
@@ -148,7 +184,7 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
                 Cancel
               </Button>
               <Button
-                disabled={false}
+                disabled={disabled}
                 onClick={() => {}}
                 size="sm"
                 className=" bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
@@ -162,9 +198,11 @@ const Editor = ({ onSubmit, onCancel, placeholder = "Write a message", defaultVa
               disabled={disabled || isEmpty}
               onClick={() => {}}
               size="iconSm"
-              className={cn("ml-auto", 
-                isEmpty ?  "bg-white hover:bg-white text-muted-foreground" 
-                : "bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
+              className={cn(
+                "ml-auto",
+                isEmpty
+                  ? "bg-white hover:bg-white text-muted-foreground"
+                  : "bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
               )}
             >
               <MdSend className="size-4" />
