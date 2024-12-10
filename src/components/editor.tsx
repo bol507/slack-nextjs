@@ -15,6 +15,7 @@ import { Hint } from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
 import { current } from "../../convex/members";
+import { EmojiPopover } from "./emoji-popover";
 
 type EditorValue = {
   image: File | null;
@@ -153,7 +154,7 @@ const Editor = ({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-          <Hint label="Emoji">
+          <EmojiPopover onEmojiSelect={() => {}}>
             <Button
               disabled={disabled}
               onClick={() => {}}
@@ -162,7 +163,7 @@ const Editor = ({
             >
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
           <Hint label="Image">
             <Button
               disabled={disabled}
@@ -210,11 +211,15 @@ const Editor = ({
           )}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
+      { variant === "create" && (
+      <div className={cn("p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 transition",
+        !isEmpty && "opacity-100" 
+      )}>
         <p>
           <strong>Shift + Return</strong> to add new line
         </p>
       </div>
+      )}
     </div>
   );
 };
