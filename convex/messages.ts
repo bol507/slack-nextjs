@@ -30,6 +30,14 @@ export const create = mutation({
     if (!userId) throw new Error("Unauthorized");
     const member = await getMember(ctx, args.workspaceId, userId);
     if (!member) throw new Error("Unauthorized");
+    let _conversationId: args.conversationId;
+    if (!args.conversationId && !args.channelId && args.parentMessageId) {
+      const parentMessage = await ctx.db.get(args.parentMessageId)
+
+      if (!parentMessage) throw new Error("Invalid parent message");
+      _conversationId = parentMessage.conversationId;
+    }
+    
     const messageId = await ctx.db.insert("messages", {
       memberId: member._id,
       body: args.body,
@@ -38,6 +46,7 @@ export const create = mutation({
       channelId: args.channelId,
       parentMessageId: args.parentMessageId,
       updatedAt: Date.now(),
+      conversationId: _conversationId,
     });
     return messageId;
   },
