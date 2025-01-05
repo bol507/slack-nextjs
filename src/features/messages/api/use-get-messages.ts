@@ -5,19 +5,19 @@ import { channel } from "diagnostics_channel";
 
 const BATCH_SIZE = 10;
 
-interface UseGetMessageProps {
+interface UseGetMessagesProps {
   channelId?: Id<"channels">,
   conversationId?: Id<"conversations">,
   parentMessageId?: Id<"messages">,
 };
 
-export type GetMessageReturnType = typeof api.messages.get._returnType["page"];
+export type GetMessagesReturnType = typeof api.messages.get._returnType["page"];
 
-export const useGetMessage = ({
+export const useGetMessages = ({
   channelId,
   conversationId,
   parentMessageId,
-}: UseGetMessageProps) => {
+}: UseGetMessagesProps) => {
   const { results, status, loadMore } = usePaginatedQuery(
     api.messages.get,
     {
