@@ -1,4 +1,7 @@
 import { Doc, Id } from "../../convex/_generated/dataModel";
+import dynamic from "next/dynamic"
+
+const Renderer = dynamic(() => import("@/components/renderer"),{ ssr: false})
 
 interface MessageProps {
   id: Id<"messages">;
@@ -46,7 +49,7 @@ export const Message = ({
 }:MessageProps) => {
   return (
     <div>
-      {JSON.stringify(body)}  
+      <Renderer value={body} />
     </div>
   )
 }
