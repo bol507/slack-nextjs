@@ -114,9 +114,6 @@ export const Message = ({
     toggleReaction(
       { messageId: id, value },
       {
-        onSuccess: (reactionId) => {
-          toast.success("Reaction added");
-        },
         onError: () => {
           toast.error("Failed to toogle reaction");
         },
