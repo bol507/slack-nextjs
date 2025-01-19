@@ -10,6 +10,9 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
 import { useConfirm } from "@/app/hooks/use-confirm";
+import { useToggleReaction } from "@/features/reactions/reactions/use-toggle-reaction";
+import React from "react";
+import { Reactions } from "./reactions";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -62,14 +65,18 @@ export const Message = ({
   threadImage,
   threadTimestamp,
 }: MessageProps) => {
+
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
   const { mutate: removeMessage, isPending: isRemovingMessage } =
     useRemoveMessage();
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
+
   const [ConfirmDialog, confirm] = useConfirm({
     title: "Delete Message",
-    message: "Are you sure you want to delete message? This cannot be undone"}
-  );
+    message: "Are you sure you want to delete message? This cannot be undone",
+  });
 
   const isPending = isUpdatingMessage;
   const handleUpdate = ({ body }: { body: string }) => {
@@ -103,6 +110,20 @@ export const Message = ({
     );
   };
 
+  const handleReaction = async (value: string) => {
+    toggleReaction(
+      { messageId: id, value },
+      {
+        onSuccess: (reactionId) => {
+          toast.success("Reaction added");
+        },
+        onError: () => {
+          toast.error("Failed to toogle reaction");
+        },
+      }
+    );
+  };
+
   if (isCompact) {
     return (
       <>
@@ -111,7 +132,8 @@ export const Message = ({
           className={cn(
             "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
             isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
-            isRemovingMessage && "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
+            isRemovingMessage &&
+              "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
           )}
         >
           <div className="flex items-start gap-2">
@@ -139,6 +161,7 @@ export const Message = ({
                     (edited)
                   </span>
                 ) : null}
+                 <Reactions data={reactions} onChange={handleReaction} />
               </div>
             )}
           </div>
@@ -149,7 +172,7 @@ export const Message = ({
               handleEdit={() => setEditingId(id)}
               handleThread={() => {}}
               handleDelete={handleRemove}
-              handleReactions={() => {}}
+              handleReactions={handleReaction}
               hideThreadButton={hideThreadButton}
             />
           )}
@@ -166,7 +189,8 @@ export const Message = ({
         className={cn(
           "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative",
           isEditing && "bg-[#f2c74433] hover:bg-[#f2c74433]",
-          isRemovingMessage && "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
+          isRemovingMessage &&
+            "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
         )}
       >
         <div className="flex items-start gap-2">
@@ -209,6 +233,7 @@ export const Message = ({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(edited)</span>
               ) : null}
+              <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -219,7 +244,7 @@ export const Message = ({
             handleEdit={() => setEditingId(id)}
             handleThread={() => {}}
             handleDelete={handleRemove}
-            handleReactions={() => {}}
+            handleReactions={handleReaction}
             hideThreadButton={hideThreadButton}
           />
         )}
