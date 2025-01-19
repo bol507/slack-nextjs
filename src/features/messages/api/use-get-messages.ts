@@ -3,7 +3,7 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { channel } from "diagnostics_channel";
 
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 20;
 
 interface UseGetMessagesProps {
   channelId?: Id<"channels">,
