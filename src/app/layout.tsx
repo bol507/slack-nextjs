@@ -5,6 +5,7 @@ import "./globals.css";
 import { Modals } from "@/components/modals";
 import { Toaster } from "@/components/ui/sonner";
 import { JotaiProvider } from "@/components/jotai-provider";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 
 export const metadata: Metadata = {
@@ -23,9 +24,11 @@ export default function RootLayout({
         <body>
           <ConvexClientProvider>
             <JotaiProvider>
+            <NuqsAdapter>  
             <Toaster />
             <Modals />
             {children}
+            </NuqsAdapter >
             </JotaiProvider>
           </ConvexClientProvider>
         </body>
