@@ -4,6 +4,8 @@ import { useGetMember } from "@/features/members/api/use-get-member";
 import { useGetMessages } from "@/features/messages/api/use-get-messages";
 import { LoaderIcon } from "lucide-react";
 import { Header } from "./header";
+import { ChatInput } from "../../channel/[channelId]/chat-input";
+import { MessageList } from "@/components/message-list";
 
 
 interface ConversationProps {
@@ -31,6 +33,21 @@ export const Conversation = ({ id }: ConversationProps) => {
       memberImage={member?.user.image}
       onClick={() => {}}
       />
+      <MessageList
+        data={results}
+        variant="conversation"
+        memberImage={member?.user.image}
+        memberName={member?.user.name}
+        loadMore={loadMore}
+        isLoadingMore={status === "LoadingMore"}
+        canLoadMore={status === "CanLoadMore"}
+      />
+      <ChatInput 
+        placeholder={`Message ${member?.user.name}`}
+        conversationId={id}
+      />
+         
+      
     </div>
   );
 };
