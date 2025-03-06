@@ -70,7 +70,7 @@ export const Message = ({
   threadTimestamp,
 }: MessageProps) => {
 
-  const { parentMessageId, onOpenMessage, onClose } = usePanel();
+  const { parentMessageId, onOpenMessage, onOpenProfile , onClose } = usePanel();
 
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
@@ -84,7 +84,7 @@ export const Message = ({
     message: "Are you sure you want to delete message? This cannot be undone",
   });
 
-  const isPending = isUpdatingMessage;
+  const isPending = isUpdatingMessage || isTogglingReaction;
   const handleUpdate = ({ body }: { body: string }) => {
     updateMessage(
       { id, body },
@@ -207,7 +207,7 @@ export const Message = ({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={ () => onOpenProfile(memberId)}>
             <Avatar className="rounded-md">
               <AvatarImage src={authorImage} className="rounded-md" />
               <AvatarFallback className="rounded-md bg-sky-500 text-white text-xs">
@@ -229,7 +229,7 @@ export const Message = ({
             <div className="flex flex-col w-full overflow-hidden">
               <div className="text-sm">
                 <button
-                  onClick={() => {}}
+                  onClick={() => onOpenProfile(memberId)}
                   className="font-bold text-primary hover:underline"
                 >
                   {authorName}
