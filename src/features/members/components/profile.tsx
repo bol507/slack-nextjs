@@ -18,7 +18,6 @@ import { useWorkspaceId } from "@/app/hooks/use-workspace-id";
 import { toast } from "sonner";
 import { useConfirm } from "@/app/hooks/use-confirm";
 import { Fragment } from "react";
-import { useRouter } from "next/router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +25,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
+
 interface ProfileProps {
   memberId: Id<"members">;
   onClose: () => void;
