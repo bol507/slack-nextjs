@@ -14,7 +14,6 @@ import { ImageIcon, Smile, XIcon } from "lucide-react";
 import { Hint } from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
-import { current } from "../../convex/members";
 import { EmojiPopover } from "./emoji-popover";
 import Image from "next/image";
 
@@ -132,7 +131,7 @@ const Editor = ({
         innerRef.current = null;
       }
     };
-  }, []);
+  },[] );
 
   const toggleToolbar = () => {
     setIsToolbarVisible((current) => !current);
@@ -144,9 +143,9 @@ const Editor = ({
     }
   };
 
-  const onEmojiSelect = (emoji: any) => {
+  const onEmojiSelect = (emojiValue: string) => {
     const quill = quillRef.current;
-    quill?.insertText(quill?.getSelection()?.index || 0, emoji.native);
+    quill?.insertText(quill?.getSelection()?.index || 0, emojiValue);
   };
 
   const isEmpty = !image && text.replace(/<(.|n)*?>/g, "").trim().length === 0;
